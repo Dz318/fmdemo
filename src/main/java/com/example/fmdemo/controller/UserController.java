@@ -11,34 +11,36 @@ import java.util.List;
  * Created by dz on 2020-4-1
  */
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/list")
+    @GetMapping("/")
     public List<User> findAll(){
         return userService.findAll();
     }
 
-    @GetMapping(value = "/find/{id}", produces = "application/json")
+    @GetMapping(value = "/{id}", produces = "application/json")
     public User find(@PathVariable(value = "id") Long id){
         return userService.findById(id).get();
     }
 
-    @PostMapping("/update")
-    public boolean update(User user) {
+    @PostMapping("/")
+    public boolean update(@RequestBody User user) {
         System.err.println("update params:"+user);
         return userService.update(user);
     }
 
-    @PostMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}", produces = "application/json")
     public boolean delete(@PathVariable("id") Long id){
+        System.out.println(id);
         return userService.deleteById(id);
     }
 
-    @PutMapping("/add")
-    public String save(User user){
+    @PutMapping("/")
+    public String save(@RequestBody User user){
         User res = userService.save(user);
         return String.valueOf(user.getId());
     }

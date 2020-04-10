@@ -40,11 +40,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteById(Long id) {
-        boolean rs = true;
+        boolean rs = false;
         try {
             userDao.deleteById(id);
+            rs = true;
         } catch (Exception e) {
-            rs = false;
         }
         return rs;
     }

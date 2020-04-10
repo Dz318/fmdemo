@@ -42,20 +42,27 @@ function openAddDialog() {
     $("#myModal").modal("show")
 }
 
-function show(id) {
-    $.get(encodeURI("find/"+id),function (res) {
-        $("#userForm").populateForm(res)
-    })
+$(function () {
     $("#userForm").submit(function () {
         var param = $(this).serializeArray()
         var jsonParam = {}
         $.each(param,function (i, field) {
             jsonParam[field.name] = field.value
         })
-        console.log(jsonParam.id)
-        if(jsonParam.id != null){
-            // 判断修改还是新增
-            $.post("update",param,function (res) {
+        var rtype
+        if(jsonParam.id != null && jsonParam.id !== ''){
+            rtype = "POST"
+        }else{
+            rtype = "PUT"
+        }
+        // 判断修改还是新增
+        $.ajax({
+            url:"/user/",
+            type:rtype,
+            data:JSON.stringify(jsonParam),
+            contentType: "application/json",
+            dataType:"json",
+            success:function (res) {
                 if (res){
                     alert("操作成功")
                     $("#myModal").modal("hide")
@@ -63,22 +70,31 @@ function show(id) {
                 }else{
                     alert("操作失败...")
                 }
-            })
-        }else{
-            alert("add")
-        }
+            }
+        })
         return false;
+    })
+})
+function show(id) {
+    $.get(encodeURI("/user/"+id),function (res) {
+        $("#userForm").populateForm(res)
     })
 }
 function del(id) {
-    if( window.confirm("确定删除？") ){
-        $.post(encodeURI("delete/"+id),function (res) {
-            if (res){
-                alert("操作成功")
-                $("#myModal").modal("hide")
-                window.location.reload()
-            }else{
-                alert("操作失败...")
+    if(window.confirm("确定删除吗？") ){
+        $.ajax({
+            url:'/user/'+id,
+            type:"delete",
+            contentType: "application/json",
+            dataType:'json',
+            success: function (res) {
+                if (res){
+                    alert("操作成功")
+                    $("#myModal").modal("hide")
+                    window.location.reload()
+                }else{
+                    alert("操作失败...")
+                }
             }
         })
     }
